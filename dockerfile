@@ -5,7 +5,7 @@ ARG RUNTIME_IMAGE=dev.registry.tanzu.vmware.com/tanzu-advanced-edition/java17-de
 FROM $BUILDER_IMAGE AS build
 
         ADD . .
-        RUN unset MAVEN_CONFIG && ./mvnw clean package -B -DskipTests
+        RUN unset MAVEN_CONFIG && mkdir -p /workspace && cp -r .mvn /workspace/ 2>/dev/null || true; SETTINGS_ARG=""; if [ -f /platform/bindings/maven-settings-binding/settings.xml ]; then SETTINGS_ARG="-s /platform/bindings/maven-settings-binding/settings.xml"; elif [ -f .mvn/settings.xml ]; then SETTINGS_ARG="-s .mvn/settings.xml"; fi; ./mvnw clean package -B -DskipTests $SETTINGS_ARG
 
 
 FROM $RUNTIME_IMAGE AS runtime
